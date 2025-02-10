@@ -7,6 +7,7 @@
   --accent: #ffb703;
   --accentsecondary: #fb8500;
 }
+
 body {
   display: flex;
   justify-content: center;
@@ -16,7 +17,7 @@ body {
   background-color: var(--bg);
   margin: 0;
   padding: 0;
-  height: 80vh;
+  min-height: 100vh;
 }
 
 button {
@@ -32,13 +33,25 @@ input {
   border: 2px solid var(--accent);
   height: 1.5rem;
   width: 20dvw;
+  max-width: 300px;
+}
+
+@media (max-width: 768px) {
+  input {
+    width: 90%;
+  }
+  h1 {
+    margin: 1.5rem;
+    font-size: 1.3rem;
+    text-align: balance;
+  }
 }
 
 /* From Uiverse.io by abrahamcalsin */
 .dot-spinner {
   --uib-size: 2.8rem;
   --uib-speed: .9s;
-  --uib-color: #183153;
+  --uib-color: var(--accent);
   position: relative;
   display: flex;
   align-items: center;
@@ -137,4 +150,26 @@ input {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+#result {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  margin: 1rem;
+  max-width: 300px;
+  color: rgba(0, 0, 0, 0.8);
+  text-decoration: none;
+  h2 {
+    margin-bottom: 0;
+  }
+}
+
+img {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 10px;
 }

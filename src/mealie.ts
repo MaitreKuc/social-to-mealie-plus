@@ -1,6 +1,6 @@
-import type { recipeInfo } from './types';
+import type { envTypes, recipeInfo } from './types';
 
-export async function postRecipe(recipe: recipeInfo, env: any) {
+export async function postRecipe(recipe: recipeInfo, env: envTypes) {
   const res = await fetch(`${env.MEALIE_URL}/api/recipes/create/html-or-json`, {
     method: 'POST',
     headers: {
@@ -12,6 +12,23 @@ export async function postRecipe(recipe: recipeInfo, env: any) {
     }),
   });
   const body = await res.json();
-  console.log(body);
   return body;
+}
+
+export async function getRecipe(recipeSlug: string, env: envTypes) {
+  const res = await fetch(`${env.MEALIE_URL}/api/recipes/${recipeSlug}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${env.MEALIE_API_KEY}`,
+    },
+  });
+  const body = await res.json();
+
+  return {
+    name: body.name,
+    description: body.description,
+    imageUrl: `${env.MEALIE_URL}/api/media/recipes/${body.id}/images/original.webp`,
+    url: `${env.MEALIE_URL}/g/home/r/${recipeSlug}`,
+  };
 }

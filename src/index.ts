@@ -1,19 +1,14 @@
 import { html } from '@elysiajs/html';
 import staticPlugin from '@elysiajs/static';
-import { env as elysiaEnv } from '@yolk-oss/elysia-env';
+import { env } from '@yolk-oss/elysia-env';
 import { Elysia, t } from 'elysia';
 import processRecipe from './controller';
+import { envElysia } from './types';
+
+export const setEnv = new Elysia({ name: 'set-env' }).use(env(envElysia));
 
 const app = new Elysia()
-  .use(
-    elysiaEnv({
-      OPENAI_URL: t.String(),
-      OPENAI_API_KEY: t.String(),
-      WHISPER_MODEL: t.String(),
-      MEALIE_URL: t.String(),
-      MEALIE_API_KEY: t.String(),
-    }),
-  )
+  .use(setEnv)
   .use(html())
   .use(staticPlugin())
   .post('/get-url', async ({ body, env }) => await processRecipe({ body, env }), {
