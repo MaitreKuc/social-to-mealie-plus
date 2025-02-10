@@ -1,12 +1,12 @@
 import { error } from 'elysia';
-import { postRecipe } from './mealie';
+import { getRecipe, postRecipe } from './mealie';
 import { getInstagram } from './social-networks/instagram';
 import { getTiktok } from './social-networks/tiktok';
-import type { recipeInfo } from './types';
+import type { envTypes, recipeInfo } from './types';
+import { envElysia } from './types';
 import { removeMedia } from './utils';
 
-// @ts-ignore
-export default async function processRecipe({ body, env }) {
+export default async function processRecipe({ body, env }: { body: { url: string }; env: envTypes }) {
   try {
     removeMedia();
     let data: recipeInfo;
@@ -18,9 +18,9 @@ export default async function processRecipe({ body, env }) {
       return error(400, JSON.stringify({ error: 'Invalid URL' }));
     }
     removeMedia();
-    return JSON.stringify({
-      data: `${env.MEALIE_URL}/g/home/r/${await postRecipe(data, env)}`,
-    });
+    const mealieResponse = await postRecipe(data, env);
+    const createdRecipe = await getRecipe(await mealieResponse, env);
+    return createdRecipe;
   } catch (e: any) {
     return error('Internal Server Error', JSON.stringify({ error: e.message }));
   }

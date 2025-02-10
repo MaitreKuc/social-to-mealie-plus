@@ -14,6 +14,7 @@
         "openai": "4.83.0",
         "puppeteer": "^24.2.0",
         "snapsave-media-downloader": "2.1.1",
+        "social-media-to-mealie": "file:",
         "whisper-node": "^1.1.1",
       },
       "devDependencies": {
@@ -390,6 +391,8 @@
 
     "snapsave-media-downloader": ["snapsave-media-downloader@2.1.1", "", { "dependencies": { "cheerio": "^1.0.0" } }, "sha512-iKKlum/0uLgEDnZlehYEoF11d6r2olgztevBI2uxrPWDuFYVOT+tW65pmdBaYS783kIiSrHUwe9nYQxpybNJRA=="],
 
+    "social-media-to-mealie": ["social-media-to-mealie@file:", { "dependencies": { "@elysiajs/html": "^1.2.0", "@elysiajs/static": "^1.2.0", "@ffmpeg-installer/ffmpeg": "1.1.0", "@yolk-oss/elysia-env": "2.0.0", "ai": "4.1.17", "elysia": "1.2.12", "fluent-ffmpeg": "2.1.3", "openai": "4.83.0", "puppeteer": "^24.2.0", "snapsave-media-downloader": "2.1.1", "social-media-to-mealie": "file:", "whisper-node": "^1.1.1" }, "devDependencies": { "@biomejs/biome": "1.9.4", "@types/fluent-ffmpeg": "2.1.27", "bun-types": "1.2.2" } }],
+
     "socks": ["socks@2.8.3", "", { "dependencies": { "ip-address": "^9.0.5", "smart-buffer": "^4.2.0" } }, "sha512-l5x7VUUWbjVFbafGLxPWkYsHIhEvmF85tbIeFZWc8ZPtoMyybuEhL7Jye/ooC4/d48FgOjSJXgsF/AJPYCW8Zw=="],
 
     "socks-proxy-agent": ["socks-proxy-agent@8.0.5", "", { "dependencies": { "agent-base": "^7.1.2", "debug": "^4.3.4", "socks": "^2.8.3" } }, "sha512-HehCEsotFqbPW9sJ8WVYB6UbmIMv7kUUORIF2Nncq4VQvBfNBLibW9YZR5dlYCSUhwcD628pRllm7n+E+YTzJw=="],
@@ -467,6 +470,8 @@
     "jsondiffpatch/chalk": ["chalk@5.4.1", "", {}, "sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w=="],
 
     "openai/@types/node": ["@types/node@18.19.75", "", { "dependencies": { "undici-types": "~5.26.4" } }, "sha512-UIksWtThob6ZVSyxcOqCLOUNg/dyO1Qvx4McgeuhrEtHTLFTf7BBhEazaE4K806FGTPtzd/2sE90qn4fVr7cyw=="],
+
+    "social-media-to-mealie/social-media-to-mealie": ["social-media-to-mealie@file:.", {}],
 
     "openai/@types/node/undici-types": ["undici-types@5.26.5", "", {}, "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA=="],
   }

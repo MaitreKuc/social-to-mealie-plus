@@ -20,9 +20,25 @@ button.addEventListener('click', async () => {
     body.removeChild(spinner);
     return;
   }
-  const newLink = document.createElement('a');
-  newLink.href = data.data;
-  newLink.innerHTML = 'Mealie created recipe';
-  body.appendChild(newLink);
+
+  const recipeCard = document.createElement('a');
+  recipeCard.href = data.url;
+  recipeCard.target = '_blank';
+  recipeCard.id = 'result';
+
+  const recipeImage = document.createElement('img');
+  recipeImage.src = `${data.imageUrl}`;
+  recipeImage.alt = 'Recipe image';
+  recipeCard.appendChild(recipeImage);
+
+  const recipeTitle = document.createElement('h2');
+  recipeTitle.textContent = data.name;
+  recipeCard.appendChild(recipeTitle);
+
+  const recipeDescription = document.createElement('p');
+  recipeDescription.textContent = data.description;
+  recipeCard.appendChild(recipeDescription);
+
+  body.appendChild(recipeCard);
   body.removeChild(spinner);
 });

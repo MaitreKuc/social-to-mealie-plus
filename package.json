@@ -16,6 +16,7 @@
     "openai": "4.83.0",
     "puppeteer": "^24.2.0",
     "snapsave-media-downloader": "2.1.1",
+    "social-media-to-mealie": "file:",
     "whisper-node": "^1.1.1"
   },
   "devDependencies": {
