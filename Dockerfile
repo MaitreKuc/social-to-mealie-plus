@@ -1,45 +1,45 @@
-FROM oven/bun:debian
+FROM node:lts-alpine AS base
 
-WORKDIR /app
-
-COPY package.json .
-COPY bun.lock .
-COPY src src
-COPY tsconfig.json .
-COPY public public
-
-ENV NODE_ENV production
-RUN bun install --production
-
-RUN apt update && apt install -y \
+RUN apk add --no-cache \
     wget \
     curl \
     unzip \
-    fonts-liberation \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libgdk-pixbuf2.0-0 \
-    libnspr4 \
-    libnss3 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm-dev \
-    libxkbcommon0 \
-    libpango-1.0-0 \
-    libxcursor1 \
-    && wget -qO- https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > /tmp/chrome.deb \
-    && apt install -y /tmp/chrome.deb \
-    && rm /tmp/chrome.deb \
-    && apt clean && rm -rf /var/lib/apt/lists/*
+    chromium \
+    ffmpeg \
+    libc6-compat
 
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-RUN chown -R bun:bun /app
-USER bun
-CMD ["bun", "src/index.ts"]
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+WORKDIR /app
+
+FROM base AS deps
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN node --run build
+
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+USER nextjs
 
 EXPOSE 3000
+
+CMD ["node", "--run", "start"]
