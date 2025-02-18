@@ -1,7 +1,6 @@
+import type { socialMediaResult } from '@//lib/types';
 import puppeteer from 'puppeteer';
 import { snapsave } from 'snapsave-media-downloader';
-import type { recipeInfo } from '@//lib/types';
-import { getTranscription } from '@//lib/ai';
 
 async function get_description({ url }: { url: string }): Promise<string> {
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'], defaultViewport: null });
@@ -25,7 +24,7 @@ async function get_description({ url }: { url: string }): Promise<string> {
   }
 }
 
-export async function getInstagram({ url }: { url: string }): Promise<recipeInfo> {
+export async function getInstagram({ url }: { url: string }): Promise<socialMediaResult> {
   const description = await get_description({ url });
   const res = await snapsave(url);
   if (
@@ -41,9 +40,8 @@ export async function getInstagram({ url }: { url: string }): Promise<recipeInfo
   const blobUrl = res.data.media[0].url;
   const blob = await fetch(blobUrl).then((r) => r.blob());
   return {
-    transcription: await getTranscription(blob),
+    blob,
     thumbnail: res.data.media[0].thumbnail,
     description,
-    postURL: url,
   };
 }

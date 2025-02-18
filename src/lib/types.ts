@@ -18,4 +18,16 @@ export type recipeResult = {
   description: string;
   imageUrl: string;
   url: string;
-}
+};
+
+export type progressType = {
+  videoDownloaded: null | boolean;
+  audioTranscribed: null | boolean;
+  recipeCreated: null | boolean;
+};
+
+export type socialMediaResult = {
+  blob: Blob;
+  thumbnail: string;
+  description: string;
+};
