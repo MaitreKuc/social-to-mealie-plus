@@ -1,0 +1,30 @@
+name: Build and Publish Docker Image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-lATEST
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=${{ github.repository }}
+          # Convert repository name to lowercase
+          REPO_NAME=${REPO_NAME,,}
+          IMAGE_TAG=ghcr.io/${REPO_NAME}:latest
+          docker buildx build --push -t $IMAGE_TAG .
