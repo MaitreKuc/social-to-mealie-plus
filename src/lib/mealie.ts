@@ -1,6 +1,7 @@
-import type { envTypes, recipeInfo } from './types';
+import type { recipeInfo, recipeResult } from './types';
+import { env } from '@//lib/constants';
 
-export async function postRecipe(recipe: recipeInfo, env: envTypes) {
+export async function postRecipe(recipe: recipeInfo) {
   const res = await fetch(`${env.MEALIE_URL}/api/recipes/create/html-or-json`, {
     method: 'POST',
     headers: {
@@ -15,7 +16,7 @@ export async function postRecipe(recipe: recipeInfo, env: envTypes) {
   return body;
 }
 
-export async function getRecipe(recipeSlug: string, env: envTypes) {
+export async function getRecipe(recipeSlug: string): Promise<recipeResult> {
   const res = await fetch(`${env.MEALIE_URL}/api/recipes/${recipeSlug}`, {
     method: 'GET',
     headers: {

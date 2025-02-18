@@ -1,14 +1,7 @@
-import * as fs from 'node:fs';
-import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-import ffmpeg from 'fluent-ffmpeg';
 import puppeteer from 'puppeteer';
 import { snapsave } from 'snapsave-media-downloader';
-import { getTranscription } from '../ai';
-import { videofile } from '../constants';
-import type { recipeInfo } from '../types';
-import { Mp4ToMp3 } from '../utils';
-
-ffmpeg.setFfmpegPath(ffmpegPath.path);
+import type { recipeInfo } from '@//lib/types';
+import { getTranscription } from '@//lib/ai';
 
 async function get_description({ url }: { url: string }): Promise<string> {
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'], defaultViewport: null });
@@ -32,7 +25,7 @@ async function get_description({ url }: { url: string }): Promise<string> {
   }
 }
 
-export async function getInstagram({ env, url }: { env: any; url: string }): Promise<recipeInfo> {
+export async function getInstagram({ url }: { url: string }): Promise<recipeInfo> {
   const description = await get_description({ url });
   const res = await snapsave(url);
   if (
@@ -47,10 +40,8 @@ export async function getInstagram({ env, url }: { env: any; url: string }): Pro
   }
   const blobUrl = res.data.media[0].url;
   const blob = await fetch(blobUrl).then((r) => r.blob());
-  fs.writeFileSync(videofile, Buffer.from(await blob.arrayBuffer()));
-  await Mp4ToMp3();
   return {
-    transcription: await getTranscription({ env }),
+    transcription: await getTranscription(blob),
     thumbnail: res.data.media[0].thumbnail,
     description,
     postURL: url,

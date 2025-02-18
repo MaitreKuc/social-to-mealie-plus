@@ -1,18 +1,8 @@
-import { t } from 'elysia';
-
 export type recipeInfo = {
   postURL: string;
   transcription: string;
   thumbnail: string;
   description: string;
-};
-
-export const envElysia = {
-  OPENAI_URL: t.String(),
-  OPENAI_API_KEY: t.String(),
-  WHISPER_MODEL: t.String(),
-  MEALIE_URL: t.String(),
-  MEALIE_API_KEY: t.String(),
 };
 
 export type envTypes = {
@@ -22,3 +12,10 @@ export type envTypes = {
   MEALIE_URL: string;
   MEALIE_API_KEY: string;
 };
+
+export type recipeResult = {
+  name: string;
+  description: string;
+  imageUrl: string;
+  url: string;
+}
