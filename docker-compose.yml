@@ -1,0 +1,15 @@
+services:
+  social-to-mealie:
+    restart: unless-stopped
+    image: ghcr.io/gerardpollorebozado/social-to-mealie:latest
+    container_name: social-to-mealie
+    environment:
+      - OPENAI_URL=https://api.openai.com/v1
+      - WHISPER_MODEL=whisper-1
+      - MEALIE_URL=
+      - MEALIE_API_KEY=
+      - OPENAI_API_KEY=
+    ports:
+      - 4000:3000
+    depends_on: []
+networks: {}
