@@ -16,3 +16,6 @@ To deploy this just use the docker-compose.yml and populate all the environment 
 ## Roadmap
 
 You can check the roadmap at the [projects tab](https://github.com/users/GerardPolloRebozado/projects/8)
+
+## Screenshot
+![Screenshot of teh web interface](./public/screenshot.png "Screenshot of the web interface")
