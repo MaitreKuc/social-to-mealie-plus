@@ -1,70 +1,135 @@
 'use client';
-import { Button } from '@//components/ui/button';
-import { Input } from '@//components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import type { progressType, recipeResult } from '@/lib/types';
 import { CircleCheck, CircleX } from 'lucide-react';
 import { useState } from 'react';
 
-export default function Home() {
+export default function RecipeFetcher() {
   const [url, setUrl] = useState('');
+  const [progress, setProgress] = useState<progressType | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [recipes, setRecipe] = useState<recipeResult[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [recipes, setRecipes] = useState<recipeResult[]>([]);
-  const [error, setError] = useState<progressType>();
 
-  const handleSubmit = async () => {
+  async function fetchRecipe() {
     setLoading(true);
-    const res = await fetch('/api/get-url', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url }),
-    });
-    const data = await res.json();
-    if (data.name) {
-      setRecipes([...recipes, data]);
+    setProgress(null);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/get-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/event-stream',
+        },
+        body: JSON.stringify({ url }),
+      });
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) throw new Error('No readable stream available');
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        chunk.split('\n\n').forEach((event) => {
+          if (!event.startsWith('data: ')) return;
+
+          try {
+            const data = JSON.parse(event.replace('data: ', ''));
+            if (data.progress) {
+              setProgress(data.progress);
+            }
+            if (data.name) {
+              setRecipe((recipes) => [...(recipes || []), data]);
+              setLoading(false);
+              setTimeout(() => {
+                setProgress(null);
+              }, 10000);
+            } else if (data.error) {
+              setError(data.error);
+              setLoading(false);
+            }
+          } catch (e) {
+            setError('Error parsing event stream');
+            setLoading(false);
+          }
+        });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    console.log(data);
-    if (data.error && data.progress) {
-      setError(data.progress as progressType);
-    } else if (data.error) {
-      alert('Internal server error');
-    }
-  };
+  }
 
   return (
     <div className='flex flex-col items-center justify-center h-screen'>
       <h1 className='text-3xl font-bold'>Welcome to social to Mealie</h1>
       <Input type='url' className='w-96 m-4' value={url} onChange={(e) => setUrl(e.target.value)} />
-      <Button className='w-96' onClick={handleSubmit} disabled={loading}>
+      <Button className='w-96' onClick={fetchRecipe} disabled={loading}>
         {loading ? 'Loading...' : 'Submit'}
       </Button>
-      <div className='flex flex-wrap justify-center gap-4 max-w-7xl'>
-        {recipes.map((recipe) => (
-          <a href={recipe.url} key={recipe.url} target='_blank' rel='noreferrer'>
-            <Card className='mt-4 w-60'>
-              <CardHeader>
-                <img src={recipe.imageUrl} alt={recipe.description} className='aspect-square object-cover' />
-                <CardTitle>{recipe.name}</CardTitle>
-                <CardDescription>{recipe.description}</CardDescription>
-              </CardHeader>
-            </Card>
-          </a>
-        ))}
-      </div>
-      {error && (
+
+      {progress && (
         <Card className={'mt-4 w-96'}>
           <CardHeader>
-            <CardTitle>Error during import</CardTitle>
+            <CardTitle>{error || 'Progress'}</CardTitle>
           </CardHeader>
           <CardContent className={'flex flex-col gap-4 justify-center items-center'}>
-            <p className={'flex gap-4'}>Video downloaded {error.videoDownloaded ? <CircleCheck /> : <CircleX />}</p>
-            <p className={'flex gap-4'}>Audio transcribed {error.audioTranscribed ? <CircleCheck /> : <CircleX />}</p>
-            <p className={'flex gap-4'}>Recipe created {error.recipeCreated ? <CircleCheck /> : <CircleX />}</p>
+            <p className={'flex gap-4'}>
+              Video downloaded{' '}
+              {progress.videoDownloaded === true ? (
+                <CircleCheck />
+              ) : progress.videoDownloaded === null ? (
+                <Spinner size={'small'} />
+              ) : (
+                <CircleX />
+              )}
+            </p>
+            <p className={'flex gap-4'}>
+              Audio transcribed{' '}
+              {progress.audioTranscribed === true ? (
+                <CircleCheck />
+              ) : progress.audioTranscribed === null ? (
+                <Spinner size={'small'} />
+              ) : (
+                <CircleX />
+              )}
+            </p>
+            <p className={'flex gap-4'}>
+              Recipe created{' '}
+              {progress.recipeCreated === true ? (
+                <CircleCheck />
+              ) : progress.recipeCreated === null ? (
+                <Spinner size={'small'} />
+              ) : (
+                <CircleX />
+              )}
+            </p>
           </CardContent>
         </Card>
+      )}
+      {recipes && (
+        <div className='flex flex-wrap justify-center gap-4 max-w-7xl'>
+          {recipes.map((recipe) => (
+            <a href={recipe.url} key={recipe.url} target='_blank' rel='noreferrer'>
+              <Card className='mt-4 w-60'>
+                <CardHeader>
+                  <img src={recipe.imageUrl} alt={recipe.description} className='aspect-square object-cover' />
+                  <CardTitle>{recipe.name}</CardTitle>
+                  <CardDescription>{recipe.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </a>
+          ))}
+        </div>
       )}
     </div>
   );
