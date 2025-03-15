@@ -53,8 +53,10 @@ async function handleRequest(url: string, isSse: boolean, controller?: ReadableS
       thumbnail: socialMediaResult.thumbnail,
       description: socialMediaResult.description,
     };
+    console.log("Creating recipe");
     const mealieResponse = await postRecipe(data);
     const createdRecipe = await getRecipe(await mealieResponse);
+    console.log("Recipe created");
     progress.recipeCreated = true;
     if (isSse && controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress })}\n\n`));

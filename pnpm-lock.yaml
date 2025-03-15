@@ -29,6 +29,9 @@ importers:
       clsx:
         specifier: 2.1.1
         version: 2.1.1
+      emoji-strip:
+        specifier: ^1.0.1
+        version: 1.0.1
       fluent-ffmpeg:
         specifier: 2.1.3
         version: 2.1.3
@@ -72,6 +75,9 @@ importers:
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
+      '@types/emoji-strip':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@types/m3u8-parser':
         specifier: ^7.2.0
         version: 7.2.0
@@ -751,6 +757,9 @@ packages:
   '@types/diff-match-patch@1.0.36':
     resolution: {integrity: sha512-xFdR6tkm0MWvBfO8xXCSsinYxHcqkQUlcHeSpMC2ukzOb6lwQAfDmW+Qt0AvlGd8HpsS28qKsB+oPeJn9I39jg==}
 
+  '@types/emoji-strip@1.0.2':
+    resolution: {integrity: sha512-/aN5Vm6hPvNi8W/GUl+jSucW3pIDQz1/1zvvRG+X2waaEM0GpvTYEm7ng7AUSttusRd71TSPcRZrQY44UCpKAg==}
+
   '@types/fluent-ffmpeg@2.1.27':
     resolution: {integrity: sha512-QiDWjihpUhriISNoBi2hJBRUUmoj/BMTYcfz+F+ZM9hHWBYABFAE6hjP/TbCZC0GWwlpa3FzvHH9RzFeRusZ7A==}
 
@@ -1089,11 +1098,17 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
+  emoji-regex@6.5.1:
+    resolution: {integrity: sha512-PAHp6TxrCy7MGMFidro8uikr+zlJJKJ/Q6mm2ExZ7HwkyR9lSVFfE3kt36qcwa24BQL7y0G9axycGjK1A/0uNQ==}
+
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
 
   emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
+
+  emoji-strip@1.0.1:
+    resolution: {integrity: sha512-1iU1Bz98ziALBnMTzQHKB104vntCokqgdmJIP9p1eM0Musc3WQ4y8C5noIckorxJ1vihZCTv2lyXMTM1UsemPg==}
 
   encoding-sniffer@0.2.0:
     resolution: {integrity: sha512-ju7Wq1kg04I3HtiYIOrUrdfdDvkyO9s5XM8QAj/bN61Yo/Vb4vgJxy5vi4Yxk01gWHbrofpPtpxM8bKger9jhg==}
@@ -2558,6 +2573,8 @@ snapshots:
 
   '@types/diff-match-patch@1.0.36': {}
 
+  '@types/emoji-strip@1.0.2': {}
+
   '@types/fluent-ffmpeg@2.1.27':
     dependencies:
       '@types/node': 22.13.10
@@ -2896,9 +2913,15 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
+  emoji-regex@6.5.1: {}
+
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
+
+  emoji-strip@1.0.1:
+    dependencies:
+      emoji-regex: 6.5.1
 
   encoding-sniffer@0.2.0:
     dependencies:
@@ -3582,6 +3605,7 @@ snapshots:
       ai: 4.1.41(react@19.0.0)(zod@3.24.2)
       class-variance-authority: 0.7.1
       clsx: 2.1.1
+      emoji-strip: 1.0.1
       fluent-ffmpeg: 2.1.3
       lucide-react: 0.482.0(react@19.0.0)
       m3u8-parser: 7.2.0
