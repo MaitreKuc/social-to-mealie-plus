@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "biome lint ."
@@ -16,26 +16,31 @@
     "ai": "4.1.41",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "emoji-strip": "^1.0.1",
     "fluent-ffmpeg": "2.1.3",
-    "lucide-react": "0.475.0",
-    "next": "15.1.7",
-    "next-themes": "0.4.4",
-    "openai": "4.85.1",
-    "puppeteer": "24.2.1",
+    "lucide-react": "0.482.0",
+    "m3u8-parser": "^7.2.0",
+    "next": "15.2.2",
+    "next-themes": "0.4.6",
+    "openai": "4.87.3",
+    "puppeteer": "24.4.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "snapsave-media-downloader": "2.1.1",
-    "tailwind-merge": "3.0.1",
+    "social-to-mealie": "file:",
+    "tailwind-merge": "3.0.2",
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@types/node": "22.13.4",
+    "@types/emoji-strip": "^1.0.2",
+    "@types/m3u8-parser": "^7.2.0",
+    "@types/node": "22.13.10",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
-    "postcss": "8.5.2",
+    "postcss": "8.5.3",
     "tailwindcss": "3.4.17",
-    "typescript": "5.7.3"
+    "typescript": "5.8.2"
   },
   "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }

@@ -26,6 +26,10 @@ async function get_description({ url }: { url: string }): Promise<string> {
 
 export async function getInstagram({ url }: { url: string }): Promise<socialMediaResult> {
   const description = await get_description({ url });
+  if (!description) {
+    throw new Error('No description found');
+  }
+  console.log('Description saved');
   const res = await snapsave(url);
   if (
     !res ||

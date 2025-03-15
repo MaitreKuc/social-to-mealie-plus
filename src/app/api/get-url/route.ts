@@ -3,6 +3,7 @@ import type { progressType, recipeInfo, socialMediaResult } from '@//lib/types';
 import { getInstagram } from '@//social-networks/instagram';
 import { getTranscription } from '@/lib/ai';
 import { getTiktok } from '@/social-networks/tiktok';
+import { getPinterest } from '@/social-networks/pinterest';
 
 interface RequestBody {
   url: string;
@@ -25,6 +26,9 @@ async function handleRequest(url: string, isSse: boolean, controller?: ReadableS
       progress.videoDownloaded = true;
     } else if (url.includes('tiktok')) {
       socialMediaResult = await getTiktok({ url });
+      progress.videoDownloaded = true;
+    } else if (url.includes('pinterest')) {
+      socialMediaResult = await getPinterest({ url });
       progress.videoDownloaded = true;
     } else {
       progress.videoDownloaded = false;
@@ -49,8 +53,10 @@ async function handleRequest(url: string, isSse: boolean, controller?: ReadableS
       thumbnail: socialMediaResult.thumbnail,
       description: socialMediaResult.description,
     };
+    console.log("Creating recipe");
     const mealieResponse = await postRecipe(data);
     const createdRecipe = await getRecipe(await mealieResponse);
+    console.log("Recipe created");
     progress.recipeCreated = true;
     if (isSse && controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress })}\n\n`));
