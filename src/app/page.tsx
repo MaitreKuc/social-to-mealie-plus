@@ -1,14 +1,14 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
 import type { progressType, recipeResult } from '@/lib/types';
 import { CircleCheck, CircleX } from 'lucide-react';
 import { useState } from 'react';
 
 export default function RecipeFetcher() {
-  const [url, setUrl] = useState('');
+  const [urlInput, setUrlInput] = useState('');
   const [progress, setProgress] = useState<progressType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [recipes, setRecipe] = useState<recipeResult[] | null>(null);
@@ -18,49 +18,51 @@ export default function RecipeFetcher() {
     setLoading(true);
     setProgress(null);
     setError(null);
+    const urlList: string[] = urlInput.split(',').map((u) => u.trim());
 
     try {
-      const response = await fetch('/api/get-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/event-stream',
-        },
-        body: JSON.stringify({ url }),
-      });
-
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (!reader) throw new Error('No readable stream available');
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        chunk.split('\n\n').forEach((event) => {
-          if (!event.startsWith('data: ')) return;
-
-          try {
-            const data = JSON.parse(event.replace('data: ', ''));
-            if (data.progress) {
-              setProgress(data.progress);
-            }
-            if (data.name) {
-              setRecipe((recipes) => [...(recipes || []), data]);
-              setLoading(false);
-              setTimeout(() => {
-                setProgress(null);
-              }, 10000);
-            } else if (data.error) {
-              setError(data.error);
-              setLoading(false);
-            }
-          } catch (e) {
-            setError('Error parsing event stream');
-            setLoading(false);
-          }
+      for (const url of urlList) {
+        const response = await fetch('/api/get-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/event-stream',
+          },
+          body: JSON.stringify({ url }),
         });
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+
+        if (!reader) throw new Error('No readable stream available');
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          chunk.split('\n\n').forEach((event) => {
+            if (!event.startsWith('data: ')) return;
+
+            try {
+              const data = JSON.parse(event.replace('data: ', ''));
+              if (data.progress) {
+                setProgress(data.progress);
+              }
+              if (data.name) {
+                setRecipe((recipes) => [...(recipes || []), data]);
+                setLoading(false);
+                setTimeout(() => {
+                  setProgress(null);
+                }, 10000);
+              } else if (data.error) {
+                setError(data.error);
+                setLoading(false);
+              }
+            } catch (e) {
+              setError('Error parsing event stream');
+              setLoading(false);
+            }
+          });
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -72,7 +74,12 @@ export default function RecipeFetcher() {
   return (
     <div className='flex flex-col items-center justify-center h-screen'>
       <h1 className='text-3xl font-bold'>Welcome to social to Mealie</h1>
-      <Input type='url' className='w-96 m-4' value={url} onChange={(e) => setUrl(e.target.value)} />
+      <Textarea
+        placeholder={'Insert all the urls to import separated by ,'}
+        className='w-96 m-4'
+        value={urlInput}
+        onChange={(e) => setUrlInput(e.target.value)}
+      />
       <Button className='w-96' onClick={fetchRecipe} disabled={loading}>
         {loading ? 'Loading...' : 'Submit'}
       </Button>
