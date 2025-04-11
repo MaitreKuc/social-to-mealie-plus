@@ -29,7 +29,8 @@
     "snapsave-media-downloader": "2.1.1",
     "social-to-mealie": "file:",
     "tailwind-merge": "3.0.2",
-    "tailwindcss-animate": "1.0.7"
+    "tailwindcss-animate": "1.0.7",
+    "yt-dlp-wrap": "^2.3.12"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
