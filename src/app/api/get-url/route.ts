@@ -2,8 +2,9 @@ import { getRecipe, postRecipe } from '@//lib/mealie';
 import type { progressType, recipeInfo, socialMediaResult } from '@//lib/types';
 import { getInstagram } from '@//social-networks/instagram';
 import { getTranscription } from '@/lib/ai';
-import { getTiktok } from '@/social-networks/tiktok';
 import { getPinterest } from '@/social-networks/pinterest';
+import { getTiktok } from '@/social-networks/tiktok';
+import { getYoutube } from '@/social-networks/youtube';
 
 interface RequestBody {
   url: string;
@@ -21,24 +22,33 @@ async function handleRequest(url: string, isSse: boolean, controller?: ReadableS
     if (isSse && controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress })}\n\n`));
     }
-    if (url.includes('instagram')) {
-      socialMediaResult = await getInstagram({ url });
-      progress.videoDownloaded = true;
-    } else if (url.includes('tiktok')) {
-      socialMediaResult = await getTiktok({ url });
-      progress.videoDownloaded = true;
-    } else if (url.includes('pinterest')) {
-      socialMediaResult = await getPinterest({ url });
-      progress.videoDownloaded = true;
-    } else {
-      progress.videoDownloaded = false;
-      if (isSse && controller) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Invalid URL', progress })}\n\n`));
-        controller.close();
-        return;
-      }
-      return new Response('Invalid URL', { status: 400 });
+    switch (true) {
+      case url.includes('instagram'):
+        socialMediaResult = await getInstagram({ url });
+        progress.videoDownloaded = true;
+        break;
+      case url.includes('tiktok'):
+        socialMediaResult = await getTiktok({ url });
+        progress.videoDownloaded = true;
+        break;
+      case url.includes('pinterest'):
+        socialMediaResult = await getPinterest({ url });
+        progress.videoDownloaded = true;
+        break;
+      case url.includes('youtube'):
+        socialMediaResult = await getYoutube({ url });
+        progress.videoDownloaded = true;
+        break;
+      default:
+        progress.videoDownloaded = false;
+        if (isSse && controller) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Invalid URL', progress })}\n\n`));
+          controller.close();
+          return;
+        }
+        return new Response('Invalid URL', { status: 400 });
     }
+
     if (isSse && controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress })}\n\n`));
     }
@@ -53,10 +63,10 @@ async function handleRequest(url: string, isSse: boolean, controller?: ReadableS
       thumbnail: socialMediaResult.thumbnail,
       description: socialMediaResult.description,
     };
-    console.log("Creating recipe");
+    console.log('Creating recipe');
     const mealieResponse = await postRecipe(data);
     const createdRecipe = await getRecipe(await mealieResponse);
-    console.log("Recipe created");
+    console.log('Recipe created');
     progress.recipeCreated = true;
     if (isSse && controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress })}\n\n`));

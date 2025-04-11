@@ -1,7 +1,8 @@
 # Social media to Mealie
 
 Found any recipe on a social media and don't want to manually write it yourself? use our tool to import any video from them in Mealie.
-For now only works with Instagram,TikTok and Pinterest (without cover image) but will add more if you open an issue.
+For now only works with Instagram,TikTok, Youtube, and Pinterest (without cover image) but will add more if you open an 
+issue.
 
 ## Deployment
 
