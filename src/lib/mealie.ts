@@ -4,7 +4,7 @@ import type { recipeInfo, recipeResult } from './types';
 
 export async function postRecipe(recipe: recipeInfo) {
   const data = emojiStrip(
-    `The following content is a transcription from a video using whisper AI and the thumbnail is from the video on a social network which will be used as the cover for the recipe you will also receive the post description which could contain more information about the ingredients. The transcription includes some timestamps which they are not required for the mealie recipe.I also send the original post from the social network that has to be saved to. <transcription> ${recipe.transcription}</transcription> <thumbnail> ${recipe.thumbnail}</thumbnail> <description> ${recipe.description}</description><postURL>${recipe.postURL}</postURL>`,
+    `The following content is a transcription from a video using whisper AI and the thumbnail is from the video on a social network which will be used as the cover for the recipe you will also receive the post description which could contain more information about the ingredients. Never translate the recipe! Always keep the recipe in its original language! The transcription includes some timestamps which they are not required for the mealie recipe.I also send the original post from the social network that has to be saved to. <transcription> ${recipe.transcription}</transcription> <thumbnail> ${recipe.thumbnail}</thumbnail> <description> ${recipe.description}</description><postURL>${recipe.postURL}</postURL>`,
   );
   try {
     const res = await fetch(`${env.MEALIE_URL}/api/recipes/create/html-or-json`, {
