@@ -6,9 +6,6 @@ export async function getTranscription(blob: Blob) {
     if (!process.env.WHISPER_MODEL) {
       throw new Error('WHISPER_MODEL is not set');
     }
-    if (!process.env.TEXT_MODEL) {
-      throw new Error('TEXT_MODEL is not set');
-    }
     const ai = new OpenAI({
       baseURL: env.OPENAI_URL,
       apiKey: env.OPENAI_API_KEY,
