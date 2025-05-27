@@ -1,16 +1,11 @@
 import type { socialMediaResult } from '@/lib/types';
-import { snapsave } from 'snapsave-media-downloader';
+import { downloadWithYtDlp } from '@/lib/yt-dlp';
 
 export async function getTiktok({ url }: { url: string }): Promise<socialMediaResult> {
-  const res = await snapsave(url);
-  if (!res || !res.data || !res.data.media || !res.data.media[0].url || !res.data.description || !res.data.preview) {
-    throw new Error('No media found in the post');
-  }
-  const blobUrl = res.data.media[0].url;
-  const blob = await fetch(blobUrl).then((r) => r.blob());
+  const { buffer, metadata } = await downloadWithYtDlp(url, 'tiktok-video.mp4');
   return {
-    blob,
-    thumbnail: res.data.preview,
-    description: res.data.description,
+    blob: new Blob([buffer]),
+    thumbnail: metadata.thumbnail,
+    description: metadata.description || 'No description found',
   };
 }
