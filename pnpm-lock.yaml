@@ -39,7 +39,7 @@ importers:
         specifier: 0.482.0
         version: 0.482.0(react@19.0.0)
       m3u8-parser:
-        specifier: 7.2.0
+        specifier: ^7.2.0
         version: 7.2.0
       next:
         specifier: 15.3.2
