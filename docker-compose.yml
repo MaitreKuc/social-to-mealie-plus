@@ -9,6 +9,7 @@ services:
       - MEALIE_URL=
       - MEALIE_API_KEY=
       - OPENAI_API_KEY=
+      - EXTRA_PROMPT="The result of the recipe has to be in spanish"
     ports:
       - 4000:3000
     depends_on: []
