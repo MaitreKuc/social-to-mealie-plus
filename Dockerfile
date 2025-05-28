@@ -4,11 +4,7 @@ RUN apk add --no-cache \
     wget \
     curl \
     unzip \
-    chromium \
     ffmpeg \
-    libc6-compat
-
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app
 
@@ -25,8 +21,6 @@ RUN node --run build
 
 FROM base AS runner
 WORKDIR /app
-
-RUN apk add --no-cache python3 py3-pip
 
 ENV NODE_ENV=production
 ENV PORT=3000

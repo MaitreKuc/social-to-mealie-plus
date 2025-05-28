@@ -1,10 +1,7 @@
 import { getRecipe, postRecipe } from '@//lib/mealie';
 import type { progressType, recipeInfo, socialMediaResult } from '@//lib/types';
-import { getInstagram } from '@//social-networks/instagram';
 import { getTranscription } from '@/lib/ai';
-import { getPinterest } from '@/social-networks/pinterest';
-import { getTiktok } from '@/social-networks/tiktok';
-import { getYoutube } from '@/social-networks/youtube';
+import { downloadMediaWithYtDlp } from '@/lib/yt-dlp';
 
 interface RequestBody {
   url: string;
@@ -22,32 +19,8 @@ async function handleRequest(url: string, isSse: boolean, controller?: ReadableS
     if (isSse && controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress })}\n\n`));
     }
-    switch (true) {
-      case url.includes('instagram'):
-        socialMediaResult = await getInstagram({ url });
-        progress.videoDownloaded = true;
-        break;
-      case url.includes('tiktok'):
-        socialMediaResult = await getTiktok({ url });
-        progress.videoDownloaded = true;
-        break;
-      case url.includes('pinterest'):
-        socialMediaResult = await getPinterest({ url });
-        progress.videoDownloaded = true;
-        break;
-      case url.includes('youtube'):
-        socialMediaResult = await getYoutube({ url });
-        progress.videoDownloaded = true;
-        break;
-      default:
-        progress.videoDownloaded = false;
-        if (isSse && controller) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Invalid URL', progress })}\n\n`));
-          controller.close();
-          return;
-        }
-        return new Response('Invalid URL', { status: 400 });
-    }
+    socialMediaResult = await downloadMediaWithYtDlp(url);
+    progress.videoDownloaded = true;
 
     if (isSse && controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ progress })}\n\n`));
@@ -77,6 +50,7 @@ async function handleRequest(url: string, isSse: boolean, controller?: ReadableS
     return new Response(JSON.stringify({ createdRecipe, progress }), { status: 200 });
   } catch (error: any) {
     if (isSse && controller) {
+      progress.recipeCreated = false;
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: error.message, progress })}\n\n`));
       controller.close();
       return;
