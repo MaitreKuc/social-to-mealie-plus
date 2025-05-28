@@ -4,7 +4,7 @@ RUN apk add --no-cache \
     wget \
     curl \
     unzip \
-    ffmpeg \
+    ffmpeg
 
 WORKDIR /app
 
