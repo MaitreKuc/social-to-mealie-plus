@@ -29,10 +29,12 @@ jobs:
           REPO_NAME=${{ github.repository }}
           # Convert repository name to lowercase
           REPO_NAME=${REPO_NAME,,}
-          IMAGE_TAG=ghcr.io/${REPO_NAME}:latest
+          VERSION_TAG=ghcr.io/${REPO_NAME}:${{ github.ref_name }}
+          LATEST_TAG=ghcr.io/${REPO_NAME}:latest
           
-          # Build and push for multiple architectures
+          # Build and push for multiple architectures with both tags
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --push \
-            -t $IMAGE_TAG .
+            -t $VERSION_TAG \
+            -t $LATEST_TAG .
