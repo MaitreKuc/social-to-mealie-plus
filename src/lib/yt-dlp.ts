@@ -9,9 +9,9 @@ const outputDir = path.resolve('./temp');
 export async function ensureYtDlpBinary() {
   const ytDlpVersion = process.env.YT_DLP_VERSION || '2025.05.22';
   const exists = await fs
-    .access(ytDlpPath)
-    .then(() => true)
-    .catch(() => false);
+      .access(ytDlpPath)
+      .then(() => true)
+      .catch(() => false);
 
   if (!exists) {
     console.log(`Downloading yt-dlp binary version ${ytDlpVersion}...`);
@@ -31,7 +31,7 @@ export async function downloadWithYtDlp(url: string) {
   const outputFile = path.join(outputDir, 'audio.wav');
   await fs.mkdir(outputDir, { recursive: true });
   try {
-    await ytDlpWrap.execPromise([url, '-f', 'bestaudio', '-x', '--audio-format', 'wav', '-o', outputFile]);
+    await ytDlpWrap.execPromise([url, '-x', '--audio-format', 'wav', '-o', outputFile]);
     const metadata = await ytDlpWrap.getVideoInfo(url);
     const buffer = await fs.readFile(outputFile);
     return { buffer, metadata };
