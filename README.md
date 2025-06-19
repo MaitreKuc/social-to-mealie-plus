@@ -7,6 +7,7 @@ The only tested social media are:
 - Facebook
 - YouTube Shorts
 - Pinterest
+
 But it may work with others as it used yt-dlp to download the video, if you find any issues using other websites, please open an issue.
 Currently, some post may give BAD_RECIPE error, with is a mealie issue parsing the recipe, I have still not found why 
 sometimes works and sometimes not.
