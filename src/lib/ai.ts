@@ -1,20 +1,29 @@
-import OpenAI from 'openai';
 import { env } from './constants';
 
 export async function getTranscription(blob: Blob) {
   try {
-    if (!process.env.WHISPER_MODEL) {
+    if (!env.WHISPER_MODEL) {
       throw new Error('WHISPER_MODEL is not set');
     }
-    const ai = new OpenAI({
-      baseURL: env.OPENAI_URL,
-      apiKey: env.OPENAI_API_KEY,
-    });
+
+    const formData = new FormData();
     const file = new File([blob], 'audio.wav', { type: blob.type });
-    const transcription = await ai.audio.transcriptions.create({
-      file,
-      model: process.env.WHISPER_MODEL,
+    formData.append('file', file);
+    formData.append('model', env.WHISPER_MODEL);
+
+    const response = await fetch(`${env.OPENAI_URL}/audio/transcriptions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.OPENAI_API_KEY}`,
+      },
+      body: formData,
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const transcription = await response.json();
     return transcription.text;
   } catch (error) {
     console.error('Error in getTranscription:', error);
