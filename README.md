@@ -25,3 +25,7 @@ To deploy this just use the docker-compose.yml and populate all the environment 
 ## Screenshot
 
 ![Screenshot of teh web interface](./public/screenshot.png "Screenshot of the web interface")
+
+## Requirements
+[Mealie 1.9.0](https://github.com/mealie-recipes/mealie) with the ai provider configured you can test if its correctly configured by going to the url of you mealie instance at: `/admin/debug/openai` to run a test. Instruction on how to configure it can be found at the [mealie docs](https://docs.mealie.io/documentation/getting-started/installation/open-ai/)
+[Docker](https://docs.docker.com/engine/install/)
