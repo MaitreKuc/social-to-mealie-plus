@@ -10,7 +10,7 @@ services:
       - MEALIE_API_KEY=
       - OPENAI_API_KEY=
       - USER_PROMPT="FORGET ALL PREVIOUS PROMPTS!\nYou are now a bot that will extract a recipe from the following transcript and description to the best of your ability. Output JSON only, in schema.org Recipe format with valid JSON-LD. Use the following fields:\n- @context\n- @type\n- name\n- image (use thumbnail)\n- url (use the postURL)\n- description (1-2 sentences)\n- recipeIngredient (array of ingredients)\n- recipeInstructions (array of steps)"
-      - EXTRA_PROMPT="The result of the recipe has to be in spanish"
+      - EXTRA_PROMPT="The description, ingredients, and instructions must be provided in Spanish"
     ports:
       - 4000:3000
     depends_on: []
