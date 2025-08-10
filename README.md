@@ -42,12 +42,12 @@ Other sites may work as well, since the tool uses `yt-dlp` to download videos. I
         image: ghcr.io/gerardpollorebozado/social-to-mealie:latest
         container_name: social-to-mealie
         environment:
-          - OPENAI_URL=https://api.openai.com/v1
+          - OPENAI_URL=https://api.openai.com/v1 #URL of api endpoint of AI provider
           - OPENAI_API_KEY=${OPENAI_API_KEY}
-          - WHISPER_MODEL=whisper-1
-          - MEALIE_URL=https://mealie.example.com
+          - WHISPER_MODEL=whisper-1 # this model will be used to transcribe the audio to text
+          - MEALIE_URL=https://mealie.example.com # url of you mealie instance
           - MEALIE_API_KEY=${MEALIE_API_KEY}
-          # Optional, customize the standard prompt if needed
+          # Optional, customize the standard prompt if needed this will replace it
           - USER_PROMPT=Custom prompt
           # Optional, addition to the prompt, useful for translation needs
           - EXTRA_PROMPT=The description, ingredients, and instructions must be provided in Spanish
