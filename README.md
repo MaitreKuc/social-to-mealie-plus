@@ -1,31 +1,100 @@
-# Social media to Mealie
+# Social Media to Mealie
 
-Found any recipe on a social media and don't want to manually write it yourself? use our tool to import any video from them in Mealie.
-The only tested social media are:
+Have you found a recipe on social media and don’t want to write it out yourself? This tool lets you import recipes from videos directly into [Mealie](https://github.com/mealie-recipes/mealie).
+
+**Tested social media platforms:**
 - Instagram
 - TikTok
 - Facebook
 - YouTube Shorts
 - Pinterest
 
-But it may work with others as it used yt-dlp to download the video, if you find any issues using other websites, please open an issue.
-Currently, some post may give BAD_RECIPE error, with is a mealie issue parsing the recipe, I have still not found why 
-sometimes works and sometimes not.
-The prompt can be customized in the ENV, so if you find a better one, please open an issue or PR.
+Other sites may work as well, since the tool uses `yt-dlp` to download videos. If you encounter issues with other websites, please open an issue.
 
-## Deployment
-
-To deploy this just use the docker-compose.yml and populate all the environment variables
+> **Note:** If you receive a `BAD_RECIPE` error, it may be due to Mealie’s recipe parsing. If you find a better prompt or solution, feel free to open an issue or PR!
 
 ## Features
 
--   Import posts in Mealie with a link and the click of a button
--   Use this [ios shortcut](https://www.icloud.com/shortcuts/a66a809029904151a39d8d3b98fecae4) so you just need to click share button
+- Import posts into Mealie with a link and a click
+- [iOS Shortcut](https://www.icloud.com/shortcuts/a66a809029904151a39d8d3b98fecae4) for easy importing
 
 ## Screenshot
 
-![Screenshot of teh web interface](./public/screenshot.png "Screenshot of the web interface")
+![Screenshot of the web interface](./public/screenshot.png "Screenshot of the web interface")
+
 
 ## Requirements
-- [Mealie 1.9.0](https://github.com/mealie-recipes/mealie) with the ai provider configured you can test if its correctly configured by going to the url of you mealie instance at: `/admin/debug/openai` to run a test. Instruction on how to configure it can be found at the [mealie docs](https://docs.mealie.io/documentation/getting-started/installation/open-ai/)
+
+- [Mealie 1.9.0+](https://github.com/mealie-recipes/mealie) with AI provider configured ([docs](https://docs.mealie.io/documentation/getting-started/installation/open-ai/))
 - [Docker](https://docs.docker.com/engine/install/)
+
+## Deployment
+
+<details open>
+    <summary>Docker Compose</summary>
+
+1. Create a `docker-compose.yml` file based on the example below. Use environment variable substitution to keep your secrets out of version control. You can define your secrets in a `.env` file in the same directory.
+
+    ```yml
+    services:
+      social-to-mealie:
+        restart: unless-stopped
+        image: ghcr.io/gerardpollorebozado/social-to-mealie:latest
+        container_name: social-to-mealie
+        environment:
+          - OPENAI_URL=https://api.openai.com/v1
+          - OPENAI_API_KEY=${OPENAI_API_KEY}
+          - WHISPER_MODEL=whisper-1
+          - MEALIE_URL=https://mealie.example.com
+          - MEALIE_API_KEY=${MEALIE_API_KEY}
+          # Optional, customize the standard prompt if needed
+          - USER_PROMPT=Custom prompt
+          # Optional, addition to the prompt, useful for translation needs
+          - EXTRA_PROMPT=The description, ingredients, and instructions must be provided in Spanish
+        ports:
+          - 4000:3000
+        security_opt:
+          - no-new-privileges:true
+    ```
+
+2. **Create a `.env` file** in the same directory as your `docker-compose.yml` and fill in your secrets:
+    ```env
+    OPENAI_API_KEY="sk-..."
+    MEALIE_API_KEY="ey..."
+    ```
+
+3. **Start the service with Docker Compose:**
+   ```sh
+   docker-compose up -d
+   ```
+</details>
+
+<details open>
+    <summary>Docker Run</summary>
+
+```sh
+docker run --restart unless-stopped --name social-to-mealie \
+  -e OPENAI_URL=https://api.openai.com/v1 \
+  -e OPENAI_API_KEY=sk-... \
+  -e WHISPER_MODEL=whisper-1 \
+  -e MEALIE_URL=https://mealie.example.com \
+  -e MEALIE_API_KEY=ey... \
+  -e USER_PROMPT="Custom prompt" \
+  -e EXTRA_PROMPT="The description, ingredients, and instructions must be provided in Spanish" \
+  -p 4000:3000 \
+  --security-opt no-new-privileges:true \
+  ghcr.io/gerardpollorebozado/social-to-mealie:latest
+```
+</details>
+
+## Environment Variables
+
+| Variable         | Required | Description                                                      |
+|------------------|----------|------------------------------------------------------------------|
+| OPENAI_URL       | Yes      | URL for the OpenAI API                                           |
+| OPENAI_API_KEY   | Yes      | API key for OpenAI                                               |
+| WHISPER_MODEL    | Yes      | Whisper model to use                                             |
+| MEALIE_URL       | Yes      | URL of your Mealie instance                                      |
+| MEALIE_API_KEY   | Yes      | API key for Mealie                                               |
+| USER_PROMPT      | No       | Custom prompt for recipe extraction                              |
+| EXTRA_PROMPT     | No       | Additional instructions for AI, such as language translation     |

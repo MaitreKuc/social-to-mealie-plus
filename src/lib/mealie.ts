@@ -14,7 +14,7 @@ You are now a bot that will extract a recipe from the following transcript and d
 - url (use the postURL)
 - description (1-2 sentences)
 - recipeIngredient (array of ingredients)
-- recipeInstructions (array of steps)`;
+- recipeInstructions (array of steps)\n` + process.env.EXTRA_PROMPT;
   console.log(prompt);
   prompt += `<transcription> ${recipe.transcription}</transcription> <thumbnail> ${recipe.thumbnail}</thumbnail> <description> ${recipe.description}</description><postURL>${recipe.postURL}</postURL>`;
   const data = emojiStrip(prompt);
