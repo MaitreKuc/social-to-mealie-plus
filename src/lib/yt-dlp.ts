@@ -3,18 +3,22 @@ import path from 'node:path';
 import type { socialMediaResult } from '@/lib/types';
 import YTDlpWrap from 'yt-dlp-wrap';
 
-const ytDlpPath = path.join(process.cwd(), process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp');
-const outputDir = path.join(process.cwd(), 'temp');
+const ytDlpPath = path.join('/app', process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp');
+const outputDir = path.join('/app', 'temp');
 
 export async function ensureYtDlpBinary() {
   const ytDlpVersion = process.env.YT_DLP_VERSION || '2023.11.16';
   let exists = false;
 
+  console.log(`Platform: ${process.platform}, yt-dlp path: ${ytDlpPath}`);
+
   try {
     await fs.access(ytDlpPath);
     exists = true;
+    console.log('yt-dlp binary exists');
   } catch {
     exists = false;
+    console.log('yt-dlp binary does not exist');
   }
 
   if (!exists) {
@@ -25,6 +29,7 @@ export async function ensureYtDlpBinary() {
       if (process.platform !== 'win32') {
         try {
           await fs.chmod(ytDlpPath, 0o755);
+          console.log('Set executable permissions on yt-dlp binary');
         } catch (e) {
           console.warn('Could not set executable permissions on yt-dlp binary:', e);
         }
@@ -38,7 +43,10 @@ export async function ensureYtDlpBinary() {
 }
 
 export async function downloadWithYtDlp(url: string, cookiesPath?: string) {
+  console.log('Starting downloadWithYtDlp for URL:', url);
   await ensureYtDlpBinary();
+  
+  console.log('Creating YTDlpWrap with path:', ytDlpPath);
   const ytDlpWrap = new YTDlpWrap(ytDlpPath);
   const outputFile = path.join(outputDir, 'audio.wav');
   await fs.mkdir(outputDir, { recursive: true });
@@ -70,7 +78,10 @@ export async function downloadWithYtDlp(url: string, cookiesPath?: string) {
 
   try {
     // Download audio
-    await ytDlpWrap.execPromise(args);
+    console.log('Starting yt-dlp execution...');
+    const result = await ytDlpWrap.execPromise(args);
+    console.log('yt-dlp execution completed successfully');
+    console.log('yt-dlp result:', result);
     
     // Get metadata using execPromise with --dump-json and cookies
     let metadata;
