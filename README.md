@@ -38,48 +38,57 @@ Other sites may work as well, since the tool uses `yt-dlp` to download videos. I
 ## Deployment
 
 <details open>
-    <summary>Docker Compose</summary>
+    <summary>Docker Compose (Recommended)</summary>
 
-1. Create a `docker-compose.yml` file based on the example below. Use environment variable substitution to keep your secrets out of version control. You can define your secrets in a `.env` file in the same directory.
+1. Create a `docker-compose.yml` file:
 
     ```yml
     services:
       social-to-mealie:
         restart: unless-stopped
-        image: ghcr.io/MaitreKuc/social-to-mealie-plus:latest
+        image: ghcr.io/maitrekuc/social-to-mealie-plus:latest
         container_name: social-to-mealie-plus
-        volume:
-          - /path/to/cookies.txt:\app\cookies.txt # Optional, but recommended for instagram id problem
         ports:
           - 4000:3000
+        volumes:
+          - social-to-mealie-data:/app/data
+          - /path/to/cookies.txt:/app/cookies/cookies.txt
         security_opt:
           - no-new-privileges:true
     ```
 
-
-2. **Start the service with Docker Compose:**
+2. **Start the service:**
    ```sh
    docker-compose up -d
    ```
+
+3. **First setup:** Go to http://localhost:4000/setup to create an admin account and configure the application.
 </details>
 
-<details open>
+<details>
     <summary>Docker Run</summary>
 
+⚠️ **Important:** The volume `-v xxx:/app/data` is **REQUIRED** to persist your database and configuration!
+
 ```sh
-docker run --restart unless-stopped --name social-to-mealie-plus \
-  -v /path/to/cookies.txt:/app/cookies.txt
+# Or with local directory
+docker run -d \
+  --name social-to-mealie-plus \
+  --restart unless-stopped \
   -p 4000:3000 \
-  --security-opt no-new-privileges:true \
-  ghcr.io/MaitreKuc/social-to-mealie-plus:latest
+  -v /path/to/cookies.txt:/app/cookies/cookies.txt \
+  -v ./data:/app/data \  
+  ghcr.io/maitrekuc/social-to-mealie-plus:latest
 ```
+
+**First setup:** Go to http://localhost:4000/setup to create an admin account and configure the application.
 </details>
 
-## Environment Variables
+## Configuration
 
-All variables can be modified directly through the web interface; there's no need to pass them to Docker anymore.
+All configuration is done through the web interface at `/setup` on first run. No environment variables needed!
 
-| Variable         | Required | Description                                                      |
+| Setting          | Required | Description                                                      |
 |------------------|----------|------------------------------------------------------------------|
 | OPENAI_URL       | Yes      | URL for the OpenAI API                                           |
 | OPENAI_API_KEY   | Yes      | API key for OpenAI                                               |
@@ -88,4 +97,10 @@ All variables can be modified directly through the web interface; there's no nee
 | MEALIE_API_KEY   | Yes      | API key for Mealie                                               |
 | USER_PROMPT      | No       | Custom prompt for recipe extraction                              |
 | EXTRA_PROMPT     | No       | Additional instructions for AI, such as language translation     |
-| COOKIES_PATH     | Maybe    | If you encounter cookie issues with yt-dlp                       |
+| COOKIES_PATH     | Maybe    | Path to cookies file if you encounter issues with yt-dlp        |
+
+### Data Persistence
+
+- **Database**: SQLite database stored in `/app/data/database.db`
+- **Configuration**: All settings stored in the database (no environment files needed)
+- **Volume**: Mount `/app/data` to persist your data between container restarts

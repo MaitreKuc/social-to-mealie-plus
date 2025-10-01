@@ -16,3 +16,6 @@ fi
 
 echo "🎯 Démarrage de l'application..."
 exec "$@"
+
+echo "🎯 Démarrage de l'application..."
+exec "$@"
