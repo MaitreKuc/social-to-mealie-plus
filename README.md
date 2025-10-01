@@ -1,10 +1,13 @@
 # Social Media to Mealie Plus
 
-This is a fork of GerardPolloRebozado's project, with some improvements that I deemed necessary. However, all credit for the original work goes to him.
+**This is a fork of [GerardPolloRebozado's project](https://github.com/GerardPolloRebozado/social-to-mealie), with some improvements that I deemed necessary. However, all credit for the original work goes to him.
 
 I added a database to store information about the variables and URLs that have already been processed, to prevent duplicate imports. This includes a web page for configuration and another web page to display the import history.
 
 A better interface for performing bulk imports would also be helpful.
+
+
+
 
 
 Have you found a recipe on social media and don’t want to write it out yourself? This tool lets you import recipes from videos directly into [Mealie](https://github.com/mealie-recipes/mealie).
