@@ -1,4 +1,11 @@
-# Social Media to Mealie
+# Social Media to Mealie Plus
+
+This is a fork of GerardPolloRebozado's project, with some improvements that I deemed necessary. However, all credit for the original work goes to him.
+
+I added a database to store information about the variables and URLs that have already been processed, to prevent duplicate imports. This includes a web page for configuration and another web page to display the import history.
+
+A better interface for performing bulk imports would also be helpful.
+
 
 Have you found a recipe on social media and don’t want to write it out yourself? This tool lets you import recipes from videos directly into [Mealie](https://github.com/mealie-recipes/mealie).
 
@@ -39,31 +46,18 @@ Other sites may work as well, since the tool uses `yt-dlp` to download videos. I
     services:
       social-to-mealie:
         restart: unless-stopped
-        image: ghcr.io/gerardpollorebozado/social-to-mealie:latest
-        container_name: social-to-mealie
-        environment:
-          - OPENAI_URL=https://api.openai.com/v1 #URL of api endpoint of AI provider
-          - OPENAI_API_KEY=${OPENAI_API_KEY}
-          - WHISPER_MODEL=whisper-1 # this model will be used to transcribe the audio to text
-          - MEALIE_URL=https://mealie.example.com # url of you mealie instance
-          - MEALIE_API_KEY=${MEALIE_API_KEY}
-          # Optional, customize the standard prompt if needed this will replace it
-          - USER_PROMPT=Custom prompt
-          # Optional, addition to the prompt, useful for translation needs
-          - EXTRA_PROMPT=The description, ingredients, and instructions must be provided in Spanish
+        image: ghcr.io/MaitreKuc/social-to-mealie-plus:latest
+        container_name: social-to-mealie-plus
+        volume:
+          - /path/to/cookies.txt:\app\cookies.txt # Optional, but recommended for instagram id problem
         ports:
           - 4000:3000
         security_opt:
           - no-new-privileges:true
     ```
 
-2. **Create a `.env` file** in the same directory as your `docker-compose.yml` and fill in your secrets:
-    ```env
-    OPENAI_API_KEY="sk-..."
-    MEALIE_API_KEY="ey..."
-    ```
 
-3. **Start the service with Docker Compose:**
+2. **Start the service with Docker Compose:**
    ```sh
    docker-compose up -d
    ```
@@ -73,21 +67,17 @@ Other sites may work as well, since the tool uses `yt-dlp` to download videos. I
     <summary>Docker Run</summary>
 
 ```sh
-docker run --restart unless-stopped --name social-to-mealie \
-  -e OPENAI_URL=https://api.openai.com/v1 \
-  -e OPENAI_API_KEY=sk-... \
-  -e WHISPER_MODEL=whisper-1 \
-  -e MEALIE_URL=https://mealie.example.com \
-  -e MEALIE_API_KEY=ey... \
-  -e USER_PROMPT="Custom prompt" \
-  -e EXTRA_PROMPT="The description, ingredients, and instructions must be provided in Spanish" \
+docker run --restart unless-stopped --name social-to-mealie-plus \
+  -v /path/to/cookies.txt:/app/cookies.txt
   -p 4000:3000 \
   --security-opt no-new-privileges:true \
-  ghcr.io/gerardpollorebozado/social-to-mealie:latest
+  ghcr.io/MaitreKuc/social-to-mealie-plus:latest
 ```
 </details>
 
 ## Environment Variables
+
+All variables can be modified directly through the web interface; there's no need to pass them to Docker anymore.
 
 | Variable         | Required | Description                                                      |
 |------------------|----------|------------------------------------------------------------------|
@@ -98,3 +88,4 @@ docker run --restart unless-stopped --name social-to-mealie \
 | MEALIE_API_KEY   | Yes      | API key for Mealie                                               |
 | USER_PROMPT      | No       | Custom prompt for recipe extraction                              |
 | EXTRA_PROMPT     | No       | Additional instructions for AI, such as language translation     |
+| COOKIES_PATH     | Maybe    | If you encounter cookie issues with yt-dlp                       |
