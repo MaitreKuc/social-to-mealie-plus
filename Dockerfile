@@ -26,7 +26,7 @@ RUN node --run build
 FROM base AS runner
 WORKDIR /app
 
-RUN apk add --no-cache python3 py3-pip su-exec
+RUN apk add --no-cache python3 py3-pip
 
 ENV NODE_ENV=production
 ENV PORT=3000
@@ -49,8 +49,7 @@ RUN chmod +x /app/docker-init.sh
 # Donner les permissions à nextjs AVANT de changer d'utilisateur
 RUN chown -R nextjs:nodejs /app
 
-# Ne pas changer d'utilisateur maintenant, on le fera dans le script d'init
-# USER nextjs
+# Le container démarre en root, le script d'init gère le changement d'utilisateur
 
 EXPOSE 3000
 
