@@ -56,3 +56,8 @@ cookies.txt
 Cookies.txt
 /cookies.txt
 /Cookies.txt
+
+# Docker volumes and data
+data/
+*.db
+*.db-journal

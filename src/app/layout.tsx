@@ -1,5 +1,6 @@
 import './globals.css';
 import { Providers } from './providers';
+import SetupChecker from '@/components/SetupChecker';
 import type React from 'react';
 
 export const metadata = {
@@ -12,7 +13,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en' suppressHydrationWarning>
       <head />
       <body>
-                  <Providers>
+        <Providers>
+          <SetupChecker>
             <div className="min-h-screen bg-background">
               <header className="border-b">
                 <div className="container mx-auto py-4">
@@ -33,7 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {children}
               </main>
             </div>
-          </Providers>
+          </SetupChecker>
+        </Providers>
       </body>
     </html>
   );

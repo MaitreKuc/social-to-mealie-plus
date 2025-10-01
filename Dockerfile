@@ -17,6 +17,10 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Générer le client Prisma
+RUN npx prisma generate
+
 RUN node --run build
 
 FROM base AS runner
@@ -35,10 +39,17 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/docker-init.sh ./docker-init.sh
+
+# Créer le répertoire pour la base de données
+RUN mkdir -p /app/data
+RUN chmod +x /app/docker-init.sh
 RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
 EXPOSE 3000
 
+ENTRYPOINT ["/app/docker-init.sh"]
 CMD ["node", "--run", "start"]
