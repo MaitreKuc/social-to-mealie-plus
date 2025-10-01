@@ -1,7 +1,7 @@
 services:
   social-to-mealie:
     restart: unless-stopped
-    image: ghcr.io/gerardpollorebozado/social-to-mealie:latest
+    image: ghcr.io/maitrekuc/social-to-mealie-plus:latest
     container_name: social-to-mealie
     ports:
       - 4000:3000

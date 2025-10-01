@@ -79,7 +79,15 @@ export async function downloadWithYtDlp(url: string, cookiesPath?: string) {
   try {
     // Download audio
     console.log('Starting yt-dlp execution...');
-    const result = await ytDlpWrap.execPromise(args);
+    
+    // Add timeout to prevent hanging
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('yt-dlp execution timeout after 60 seconds')), 60000);
+    });
+    
+    const execPromise = ytDlpWrap.execPromise(args);
+    const result = await Promise.race([execPromise, timeoutPromise]);
+    
     console.log('yt-dlp execution completed successfully');
     console.log('yt-dlp result:', result);
     
@@ -111,7 +119,15 @@ export async function downloadWithYtDlp(url: string, cookiesPath?: string) {
     }
     
     const buffer = await fs.readFile(outputFile);
+    console.log('Audio file read successfully, size:', buffer.length, 'bytes');
     return { buffer, metadata };
+  } catch (error) {
+    console.error('Error in yt-dlp execution:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    throw error;
   } finally {
     await fs.unlink(outputFile).catch(() => {});
   }
